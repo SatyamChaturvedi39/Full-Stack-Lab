@@ -1,0 +1,12 @@
+[
+  {"id":"S1","title":"Container - Electronics","mode":"rail","weight":1200,"origin":"Mumbai","destination":"Delhi","note":"Fragile electronics"},
+  {"id":"S2","title":"Express Parcels","mode":"air","weight":50,"origin":"Chennai","destination":"Bengaluru","note":"Urgent documents"},
+  {"id":"S3","title":"Automotive parts","mode":"rail","weight":800,"origin":"Pune","destination":"Hyderabad","note":""},
+  {"id":"S4","title":"Pharma consign.","mode":"air","weight":120,"origin":"Kolkata","destination":"Mumbai","note":"Temperature-controlled"},
+  {"id":"S5","title":"Retail garments","mode":"rail","weight":600,"origin":"Noida","destination":"Lucknow","note":""},
+  {"id":"S6","title":"Perishables","mode":"air","weight":200,"origin":"Bengaluru","destination":"Goa","note":"Chilled"},
+  {"id":"S7","title":"Industrial raw","mode":"rail","weight":2000,"origin":"Jamshedpur","destination":"Visakhapatnam","note":""},
+  {"id":"S8","title":"Electronics - small","mode":"air","weight":30,"origin":"Delhi","destination":"Ahmedabad","note":"Handle with care"},
+  {"id":"S9","title":"Furniture","mode":"rail","weight":1500,"origin":"Surat","destination":"Rajkot","note":""},
+  {"id":"S10","title":"Books & media","mode":"rail","weight":300,"origin":"Chennai","destination":"Trichy","note":""}
+]
