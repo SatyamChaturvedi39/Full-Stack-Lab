@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Sample Submission Form — Lab</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    .selected {
+      background-color: #e0f7ff;
+      border: 1px solid #06b6d4;
+      border-radius: 0.375rem;
+      padding: 0.2rem 0.45rem;
+    }
+
+    .option-label:focus-within {
+      outline: 3px solid rgba(3, 105, 161, 0.12);
+      outline-offset: 2px;
+    }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen font-sans">
+  <main class="max-w-3xl mx-auto p-7 ">
+    <section aria-labelledby="form-heading" class="bg-white rounded-lg shadow p-6 mb-6">
+      <h2 id="form-heading" class="text-xl font-semibold mb-2">Submit Your Details</h2>
+      <p class="text-sm text-gray-600 mb-4">Fill the form and click <span class="font-medium">Submit</span>. Results will appear below.</p>
+
+      <form id="infoForm" class="space-y-4" novalidate>
+        <div>
+          <label for="fullName" class="block text-sm font-medium text-gray-700">Full name</label>
+          <input id="fullName" name="fullName" type="text" required
+                 class="mt-1 block w-full border rounded px-3 py-2 focus:ring-2 focus:ring-sky-300"
+                 placeholder="e.g., Asha Verma">
+        </div>
+
+        <div>
+          <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+          <input id="email" name="email" type="email" required
+                 class="mt-1 block w-full border rounded px-3 py-2 focus:ring-2 focus:ring-sky-300"
+                 placeholder="you@example.com">
+        </div>
+
+        <div>
+          <label for="productCategory" class="block text-sm font-medium text-gray-700">Product Category</label>
+          <select id="productCategory" name="productCategory"
+                  class="mt-1 block w-full border rounded px-3 py-2">
+            <option value="">-- choose a category --</option>
+            <option>Electronics</option>
+            <option>Apparel</option>
+            <option>Perishables</option>
+            <option>Documents</option>
+            <option>General cargo</option>
+          </select>
+        </div>
+
+        <fieldset class="mt-2">
+          <legend class="text-sm font-medium text-gray-700">Preferred contact time</legend>
+          <div class="mt-2 grid grid-cols-3 gap-2">
+            <label class="option-label inline-flex items-center gap-2 border rounded px-3 py-2 cursor-pointer">
+              <input class="option-input" type="radio" name="contactTime" value="Morning" />
+              <span class="text-sm">08:00 AM - 10:00 AM</span>
+            </label>
+
+            <label class="option-label inline-flex items-center gap-2 border rounded px-3 py-2 cursor-pointer">
+              <input class="option-input" type="radio" name="contactTime" value="Afternoon" />
+              <span class="text-sm">01:00 PM - 03:00 PM</span>
+            </label>
+
+            <label class="option-label inline-flex items-center gap-2 border rounded px-3 py-2 cursor-pointer">
+              <input class="option-input" type="radio" name="contactTime" value="Evening" />
+              <span class="text-sm">06:00 PM - 08:00 PM</span>
+            </label>
+          </div>
+        </fieldset>
+
+        <fieldset class="mt-4">
+          <legend class="text-sm font-medium text-gray-700">Service level (choose all that apply)</legend>
+          <div class="mt-2 grid grid-cols-2 gap-2">
+            <label class="option-label inline-flex items-center gap-2 border rounded px-3 py-2 cursor-pointer">
+              <input class="option-input" type="checkbox" name="serviceLevel" value="Standard" />
+              <span class="text-sm">Standard</span>
+            </label>
+
+            <label class="option-label inline-flex items-center gap-2 border rounded px-3 py-2 cursor-pointer">
+              <input class="option-input" type="checkbox" name="serviceLevel" value="Priority" />
+              <span class="text-sm">Priority</span>
+            </label>
+
+            <label class="option-label inline-flex items-center gap-2 border rounded px-3 py-2 cursor-pointer">
+              <input class="option-input" type="checkbox" name="serviceLevel" value="Overnight" />
+              <span class="text-sm">Overnight</span>
+            </label>
+
+            <label class="option-label inline-flex items-center gap-2 border rounded px-3 py-2 cursor-pointer">
+              <input class="option-input" type="checkbox" name="serviceLevel" value="White-glove" />
+              <span class="text-sm">White-glove</span>
+            </label>
+          </div>
+        </fieldset>
+
+        <div class="pt-3">
+          <button type="submit"
+                  class="bg-sky-600 text-white px-4 py-2 rounded font-semibold hover:bg-sky-700 focus:ring-2 focus:ring-sky-300">
+            Submit
+          </button>
+          <button type="reset"
+                  class="ml-2 border px-3 py-2 rounded hover:bg-gray-100">Reset</button>
+        </div>
+      </form>
+    </section>
+
+    <section id="outputArea" aria-live="polite" class="hidden bg-white rounded-lg shadow p-6">
+    </section>
+  </main>
+
+  <script>
+    const form = document.querySelector('#infoForm');
+    const outputArea = document.querySelector('#outputArea');
+
+    function updateLabelHighlights() {
+      const inputs = document.querySelectorAll('.option-input');
+      inputs.forEach(input => {
+        const label = input.closest('.option-label');
+        if (!label) return;
+        if (input.type === 'radio') {
+          const group = document.querySelectorAll('input[type="radio"][name="' + input.name + '"]');
+          
+          if (input.checked) label.classList.add('selected');
+          else label.classList.remove('selected');
+        } else if (input.type === 'checkbox') {
+ 
+          if (input.checked) label.classList.add('selected');
+          else label.classList.remove('selected');
+        }
+      });
+    }
+
+    const optionInputs = document.querySelectorAll('.option-input');
+    optionInputs.forEach(inp => {
+      inp.addEventListener('change', () => {
+        if (inp.type === 'radio') {
+          const radios = document.querySelectorAll('input[type="radio"][name="' + inp.name + '"]');
+          radios.forEach(r => {
+            const lab = r.closest('.option-label');
+            if (!lab) return;
+            if (r.checked) lab.classList.add('selected'); else lab.classList.remove('selected');
+          });
+        } else {
+ 
+          const lab = inp.closest('.option-label');
+          if (!lab) return;
+          if (inp.checked) lab.classList.add('selected'); else lab.classList.remove('selected');
+        }
+      });
+    });
+
+    form.addEventListener('submit', function (ev) {
+      ev.preventDefault();
+
+      const name = document.querySelector('#fullName').value.trim();
+      const email = document.querySelector('#email').value.trim();
+      const category = document.querySelector('#productCategory').value;
+
+      const contactTimeInput = document.querySelector('input[name="contactTime"]:checked');
+      const contactTime = contactTimeInput ? contactTimeInput.value : '(not selected)';
+
+      const checkedBoxes = document.querySelectorAll('input[name="serviceLevel"]:checked');
+      const serviceLevels = Array.from(checkedBoxes).map(cb => cb.value);
+
+      const html = `
+        <h3 class="text-lg font-semibold mb-2">Captured Information</h3>
+        <div class="text-sm text-gray-700 space-y-2">
+          <div><strong>Full name:</strong> ${escapeHtml(name || '(empty)')}</div>
+          <div><strong>Email:</strong> ${escapeHtml(email || '(empty)')}</div>
+          <div><strong>Product category:</strong> ${escapeHtml(category || '(none)')}</div>
+          <div><strong>Preferred contact time:</strong> ${escapeHtml(contactTime)}</div>
+          <div><strong>Service level(s):</strong> ${serviceLevels.length ? escapeHtml(serviceLevels.join(', ')) : '(none selected)'}</div>
+        </div>
+      `;
+
+      outputArea.innerHTML = html;
+      outputArea.classList.remove('hidden');
+      outputArea.classList.add('border', 'border-sky-200', 'bg-sky-50', 'animate__animated'); // subtle style
+
+      outputArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+
+    function escapeHtml(str) {
+      return String(str)
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#39;');
+    }
+
+    document.addEventListener('DOMContentLoaded', updateLabelHighlights);
+  </script>
+
+</body>
+</html>

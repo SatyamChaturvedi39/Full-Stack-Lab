@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Digvijay Express — Tracking</title>
+
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    /* Element selector */
+    label { font-family: 'Poppins', sans-serif; }
+
+    /* class selector */
+    .chip { display:inline-block; padding:0.25rem 0.5rem; border-radius:0.375rem; background:#eef2f7; color:#0b5c7a; font-weight:600; }
+
+    /* ID selector used on modal */
+    #modal-toggle { display:none; }
+    #modal-toggle:checked + .modal { display: flex; }
+
+    /* Modal style */
+    .modal { display:none; position: fixed; inset:0; align-items:center; justify-content:center; background: rgba(2,6,23,0.5); }
+    .modal-card { background:white; padding:1.25rem; width: min(90%, 40rem); border-radius:0.5rem; }
+
+    /* Pseudo selectors */
+    .quick-link:first-child { font-weight:700; }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+
+  <!-- Header -->
+  <header class="bg-white shadow-sm">
+    <nav class="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="bg-teal-600 text-white font-bold px-3 py-2 rounded">DE</div>
+        <div>
+          <div class="text-lg font-semibold">Digvijay Express</div>
+          <div class="text-xs text-gray-500">Rail & Air Cargo Logistics</div>
+        </div>
+      </div>
+
+      <ul class="md:flex items-center gap-6 text-sm hidden md:flex">
+        <li><a class="text-gray-700 hover:text-teal-600" href="index.html">Home</a></li>
+        <li><a class="text-gray-700 hover:text-teal-600" href="services.html">Services</a></li>
+        <li><a class="text-gray-700 hover:text-teal-600" href="tracking.html">Tracking</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="max-w-5xl mx-auto px-6 py-10">
+    <section class="bg-white rounded-lg p-6 shadow-sm">
+      <h1 class="text-2xl font-semibold">Track Your Shipment</h1>
+      <p class="mt-2 text-gray-600">Enter your consignment number to view the current status.</p>
+
+      <form class="mt-4 grid grid-cols-1 md:grid-cols-3 gap-3">
+        <input class="border p-2 rounded" type="text" placeholder="Enter consignment number" />
+        <select class="border p-2 rounded">
+          <option>Rail</option>
+          <option>Air</option>
+        </select>
+        <div class="flex gap-2">
+          <!-- Instead of JS, we open a CSS-only modal to show "mock" tracking result -->
+          <label for="modal-toggle" class="bg-sky-600 text-white px-4 py-2 rounded font-semibold cursor-pointer">Check Status</label>
+
+          <!-- link to services or home -->
+          <a href="index.html" class="bg-gray-200 px-4 py-2 rounded">Back</a>
+        </div>
+      </form>
+
+      <div class="mt-6">
+        <span class="chip">Pro tip</span>
+        <span class="text-sm text-gray-600 ml-2">Consignment numbers usually begin with a 6–10 character ID.</span>
+      </div>
+
+      <div class="mt-6">
+        <h3 class="text-lg font-semibold">Quick links</h3>
+        <div class="mt-2 space-x-2">
+          <a class="quick-link text-teal-600" href="services.html">Services</a>
+          <a class="quick-link text-teal-600" href="index.html">Get Quote</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Modal (CSS-only) -->
+  <input id="modal-toggle" type="checkbox" />
+  <div class="modal">
+    <div class="modal-card">
+      <h2 class="text-xl font-semibold">Mock Tracking Result</h2>
+      <p class="mt-2 text-gray-700">Consignment <strong>DGX123456</strong> — In transit via rail. Expected delivery: <em>3 business days</em>.</p>
+      <div class="mt-4 flex justify-end gap-3">
+        <label for="modal-toggle" class="bg-gray-200 px-4 py-2 rounded cursor-pointer">Close</label>
+      </div>
+    </div>
+  </div>
+
+  <footer class="bg-white border-t mt-12">
+    <div class="max-w-5xl mx-auto px-6 py-6 text-sm text-gray-600 flex items-center justify-between">
+      <div>© <strong>Digvijay Express</strong> 2025.</div>
+      <div>
+        <a class="text-gray-600 hover:text-teal-600" href="#">Privacy</a>
+        <span class="mx-2">·</span>
+        <a class="text-gray-600 hover:text-teal-600" href="#">Terms</a>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

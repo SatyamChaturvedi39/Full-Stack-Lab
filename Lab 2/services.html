@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Digvijay Express — Services</title>
+
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    /* element selector */
+    h1 { font-family: 'Poppins', sans-serif; }
+
+    /* class selector */
+    .service-badge { background: #eef2ff; color: #3730a3; padding: 0.4rem 0.6rem; border-radius: 6px; font-weight:600; }
+
+    /* ID selector + pseudo */
+    #services-hero { padding: 1.5rem; border-radius: 0.6rem; }
+    #services-hero:hover { box-shadow: 0 6px 18px rgba(2,6,23,0.06); transform: translateY(-3px); transition: all 180ms ease; }
+
+    /* relative units and media query */
+    .grid-col { display: grid; grid-template-columns: 1fr 2fr; gap: 1.2rem; }
+    @media (max-width: 48rem) { .grid-col { grid-template-columns: 1fr; } }
+
+    /* pseudo selectors */
+    .service-list li:first-child { font-weight:700; }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+
+  <!-- Header (same nav, minimal) -->
+  <header class="bg-white shadow-sm">
+    <nav class="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="bg-teal-600 text-white font-bold px-3 py-2 rounded">DE</div>
+        <div>
+          <div class="text-lg font-semibold">Digvijay Express</div>
+          <div class="text-xs text-gray-500">Rail & Air Cargo Logistics</div>
+        </div>
+      </div>
+
+      <ul class="md:flex items-center gap-6 text-sm hidden md:flex">
+        <li><a class="text-gray-700 hover:text-teal-600" href="index.html">Home</a></li>
+        <li><a class="text-gray-700 hover:text-teal-600" href="services.html">Services</a></li>
+        <li><a class="text-gray-700 hover:text-teal-600" href="tracking.html">Tracking</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="max-w-5xl mx-auto px-6 py-10">
+
+    <!-- Services hero with inline SVG -->
+    <section id="services-hero" class="bg-white p-6 mb-6">
+      <div class="flex items-start gap-4">
+        <div class="w-1/4">
+          <!-- SVG illustration (train + plane) -->
+          <svg viewBox="0 0 120 80" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
+            <rect x="4" y="38" width="60" height="22" rx="2" fill="#0ea5a4"/>
+            <circle cx="18" cy="62" r="4" fill="#0b7285"/>
+            <circle cx="46" cy="62" r="4" fill="#0b7285"/>
+            <path d="M75 24 L115 12 L105 24 L75 24 Z" fill="#0284c7"/>
+            <rect x="70" y="30" width="42" height="10" rx="2" fill="#0369a1"/>
+          </svg>
+        </div>
+
+        <div class="w-3/4">
+          <h1 class="text-2xl font-semibold">Our Core Services</h1>
+          <p class="mt-2 text-gray-600">A concise look at rail and air cargo options, plus end-to-end logistics for businesses.</p>
+
+          <div class="mt-4 space-y-2">
+            <div class="service-badge inline-block">Rail Freight</div>
+            <div class="service-badge inline-block">Air Express</div>
+            <div class="service-badge inline-block">Customs Support</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Two articles -->
+    <section class="grid-col">
+      <article class="bg-white rounded-lg p-6 shadow-sm">
+        <h2 class="text-xl font-semibold">Rail Freight — Economical Bulk Movement</h2>
+        <p class="mt-2 text-gray-600">Best for heavy goods and predictable schedules. We operate container loading at major junctions with scheduled departures.</p>
+        <ul class="service-list mt-3 list-disc list-inside text-gray-700">
+          <li>Full wagon / container booking</li>
+          <li>Scheduled corridors</li>
+          <li>Insurance & warehousing</li>
+        </ul>
+        <p class="mt-3"><a class="text-teal-600 hover:underline" href="tracking.html">Track rail consignments</a></p>
+      </article>
+
+      <article class="bg-white rounded-lg p-6 shadow-sm">
+        <h2 class="text-xl font-semibold">Air Freight — Fast & Secure</h2>
+        <p class="mt-2 text-gray-600">Premium handling, secure chain-of-custody, and airport-to-airport express lanes for urgent goods.</p>
+        <ul class="service-list mt-3 list-disc list-inside text-gray-700">
+          <li>Priority handling</li>
+          <li>Customs clearance assistance</li>
+          <li>Door-to-airport pickup</li>
+        </ul>
+        <p class="mt-3"><a class="text-teal-600 hover:underline" href="tracking.html">Track air consignments</a></p>
+      </article>
+    </section>
+
+    <!-- Canvas demonstration (no JS) -->
+    <section class="mt-8 bg-white rounded-lg p-6 shadow-sm">
+      <h3 class="text-lg font-semibold">Cargo Route Map</h3>
+      <canvas id="cargo-canvas" width="600" height="200" style="width:100%; max-width:40rem; height:12rem; border:1px solid #e6e6e6;">
+        Your browser does not support canvas.
+      </canvas>
+    </section>
+
+  </main>
+
+  <footer class="bg-white border-t mt-12">
+    <div class="max-w-5xl mx-auto px-6 py-6 text-sm text-gray-600 flex items-center justify-between">
+      <div>© <strong>Digvijay Express</strong> 2025.</div>
+      <div>
+        <a class="text-gray-600 hover:text-teal-600" href="#">Privacy</a>
+        <span class="mx-2">·</span>
+        <a class="text-gray-600 hover:text-teal-600" href="#">Terms</a>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
