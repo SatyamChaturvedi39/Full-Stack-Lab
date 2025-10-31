@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Digvijay Express — Cargo Dashboard</title>
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    /* small visual for dragging */
+    .dragging { opacity: 0.5; transform: scale(0.995); }
+  </style>
+</head>
+
+<body id="bodyRoot" class="min-h-screen bg-gray-900 text-gray-100"> <!-- default dark -->
+  <header id="appHeader" class="bg-gray-800 shadow-sm sticky top-0 z-20">
+    <div class="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
+      <div>
+        <h1 id="titleEl" class="text-lg font-semibold">Digvijay Express — Cargo Dashboard</h1>
+        <p id="subtitleEl" class="text-xs text-gray-400">Transporting Goods of all kind</p>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <label id="themeLabel" class="text-sm text-gray-300">Theme</label>
+        <button id="themeBtn" class="px-3 py-1 bg-sky-600 text-white rounded text-sm">Dark</button>
+      </div>
+    </div>
+  </header>
+
+  <main id="appMain" class="max-w-4xl mx-auto p-4 space-y-4">
+    <section id="controlsSection" class="bg-gray-800 p-4 rounded shadow">
+      <div class="flex flex-col md:flex-row md:items-center gap-3">
+        <input id="search" class="flex-1 border border-gray-700 px-3 py-2 rounded bg-gray-700 text-gray-100"
+               placeholder="Search by destination, origin or title" />
+
+        <select id="modeFilter" class="w-40 border border-gray-700 px-3 py-2 rounded bg-gray-700 text-gray-100">
+          <option value="">All modes</option>
+          <option value="rail">Rail</option>
+          <option value="air">Air</option>
+        </select>
+
+        <button id="refreshBtn" class="px-3 py-2 bg-green-600 text-white rounded">Refresh Data</button>
+      </div>
+      <p id="status" class="text-xs text-gray-400 mt-2">Loading...</p>
+    </section>
+
+    <section id="listSection" class="bg-gray-800 p-4 rounded shadow">
+      <h2 class="font-semibold mb-3">Shipments (drag to reorder)</h2>
+      <div id="list" class="grid gap-3"></div>
+    </section>
+
+    <section id="notes" class="text-sm text-gray-400">
+      <p><strong>Notes:</strong> Theme & order are saved in localStorage. Service Worker caches data for offline use.</p>
+    </section>
+  </main>
+
+  <footer id="appFooter" class="text-center text-xs text-gray-400 py-4">Digvijay Express — Lab 4</footer>
+
+<script>
+
+const bodyRoot = document.querySelector('#bodyRoot');
+const headerEl = document.querySelector('#appHeader');
+const mainEl = document.querySelector('#appMain');
+const controlsSection = document.querySelector('#controlsSection');
+const listSection = document.querySelector('#listSection');
+const footerEl = document.querySelector('#appFooter');
+const searchInput = document.querySelector('#search');
+const modeFilter = document.querySelector('#modeFilter');
+const refreshBtn = document.querySelector('#refreshBtn');
+const statusEl = document.querySelector('#status');
+const themeBtn = document.querySelector('#themeBtn');
+
+const DATA_URL = 'https://raw.githubusercontent.com/SatyamChaturvedi39/Full-Stack-Lab/refs/heads/main/data.json';
+let items = [], currentOrder = [];
+
+const THEME_KEY = 'digvijay_theme'; // stores 'dark' or 'light'
+
+const themeTargets = [
+  { el: bodyRoot, dark: ['bg-gray-900','text-gray-100'], light: ['bg-gray-50','text-gray-900'] },
+  { el: headerEl, dark: ['bg-gray-800'], light: ['bg-white'] },
+  { el: controlsSection, dark: ['bg-gray-800'], light: ['bg-white'] },
+  { el: listSection, dark: ['bg-gray-800'], light: ['bg-white'] },
+  { el: footerEl, dark: ['text-gray-400'], light: ['text-gray-600'] },
+];
+
+function applyTheme(theme) {
+  themeTargets.forEach(t => {
+    (t.dark.concat(t.light)).forEach(c => t.el.classList.remove(c));
+    (theme === 'dark' ? t.dark : t.light).forEach(c => t.el.classList.add(c));
+  });
+
+  const inputEls = document.querySelectorAll('input, select');
+  inputEls.forEach(inp => {
+    // remove previous manual classes
+    inp.classList.remove('bg-gray-700','text-gray-100','border-gray-700');
+    inp.classList.remove('bg-white','text-gray-900','border-gray-200');
+    if (theme === 'dark') {
+      inp.classList.add('bg-gray-700','text-gray-100','border-gray-700');
+    } else {
+      inp.classList.add('bg-white','text-gray-900','border-gray-200');
+    }
+  });
+
+  // button style
+  themeBtn.textContent = theme === 'dark' ? 'Dark' : 'Light';
+  localStorage.setItem(THEME_KEY, theme);
+
+  // re-render cards with proper classes
+  renderList();
+}
+
+function toggleTheme() {
+  const cur = localStorage.getItem(THEME_KEY) || 'dark';
+  const next = cur === 'dark' ? 'light' : 'dark';
+  applyTheme(next);
+}
+
+// on load: set stored theme (default dark)
+applyTheme(localStorage.getItem(THEME_KEY) || 'dark');
+themeBtn.addEventListener('click', toggleTheme);
+
+/* ---------- Fetching  data ---------- */
+async function fetchData() {
+  statusEl.textContent = 'Fetching data...';
+  try {
+    const res = await fetch(DATA_URL);
+    if (!res.ok) throw new Error('Network');
+    const data = await res.json();
+    items = data.slice(0,10);
+    localStorage.setItem('digvijay_data', JSON.stringify(items));
+    const savedOrder = JSON.parse(localStorage.getItem('digvijay_order') || '[]');
+    currentOrder = savedOrder.length ? savedOrder : items.map(i=>i.id);
+    statusEl.textContent = 'Data loaded (online).';
+    renderList();
+  } catch (err) {
+    const cached = localStorage.getItem('digvijay_data');
+    if (cached) {
+      items = JSON.parse(cached);
+      currentOrder = JSON.parse(localStorage.getItem('digvijay_order') || JSON.stringify(items.map(i=>i.id)));
+      statusEl.textContent = 'Offline — using cached data.';
+      renderList();
+    } else {
+      statusEl.textContent = 'Unable to load data.';
+      document.querySelector('#list').innerHTML = '<div class="text-sm text-red-600">No data</div>';
+    }
+  }
+}
+
+/* ---------- Render list (cards use theme at render time) ---------- */
+function renderList() {
+  const q = searchInput.value.trim().toLowerCase();
+  const mode = modeFilter.value;
+  const map = new Map(items.map(i => [i.id,i]));
+  // ensure order includes all ids
+  items.forEach(i => { if (!currentOrder.includes(i.id)) currentOrder.push(i.id); });
+  const ordered = currentOrder.map(id => map.get(id)).filter(Boolean);
+  let visible = ordered.filter(it => {
+    const text = (it.title + ' ' + (it.origin||'') + ' ' + (it.destination||'')).toLowerCase();
+    const okQ = !q || text.includes(q);
+    const okM = !mode || it.mode === mode;
+    return okQ && okM;
+  });
+
+  const theme = localStorage.getItem(THEME_KEY) || 'dark';
+  const cardBg = theme === 'dark' ? 'bg-gray-700 dark:border-gray-600' : 'bg-gray-50 border border-gray-200';
+  const textMuted = theme === 'dark' ? 'text-gray-300' : 'text-gray-500';
+
+  const listEl = document.querySelector('#list');
+  listEl.innerHTML = '';
+  visible.forEach(item => {
+    const card = document.createElement('div');
+    card.setAttribute('draggable','true');
+    card.dataset.id = item.id;
+    // set classes depending on theme (keeps styling consistent)
+    card.className = `p-3 rounded ${cardBg} `;
+    card.innerHTML = `
+      <div class="flex items-start justify-between gap-3">
+        <div>
+          <div class="text-sm font-semibold">${escapeHtml(item.title)}</div>
+          <div class="${textMuted} text-xs">Mode: <strong>${item.mode}</strong> • Weight: ${item.weight}kg</div>
+          <div class="text-xs mt-1 ${textMuted}">From ${escapeHtml(item.origin)} → ${escapeHtml(item.destination)}</div>
+          <div class="text-xs mt-1 ${textMuted}">${escapeHtml(item.note||'')}</div>
+        </div>
+        <div class="${textMuted} text-xs">ID:${item.id}</div>
+      </div>`;
+    attachDragHandlers(card);
+    listEl.appendChild(card);
+  });
+}
+
+/* ---------- Drag & Drop ---------- */
+let dragSrc = null;
+function attachDragHandlers(el) {
+  el.addEventListener('dragstart', function(e){
+    dragSrc = this;
+    this.classList.add('dragging');
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', this.dataset.id);
+  });
+  el.addEventListener('dragend', function(){ this.classList.remove('dragging'); });
+  el.addEventListener('dragover', function(e){ e.preventDefault(); });
+  el.addEventListener('drop', function(e){
+    e.preventDefault();
+    const srcId = e.dataTransfer.getData('text/plain');
+    const dstId = this.dataset.id;
+    if (srcId === dstId) return;
+    const from = currentOrder.indexOf(srcId);
+    const to = currentOrder.indexOf(dstId);
+    if (from > -1 && to > -1) {
+      currentOrder.splice(from,1);
+      currentOrder.splice(to,0,srcId);
+      localStorage.setItem('digvijay_order', JSON.stringify(currentOrder));
+      renderList();
+    }
+  });
+}
+
+/* ---------- events ---------- */
+searchInput.addEventListener('input', renderList);
+modeFilter.addEventListener('change', renderList);
+refreshBtn.addEventListener('click', fetchData);
+
+/* ---------- Service Worker registration (if present) ---------- */
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').catch(()=>console.warn('SW registration failed'));
+}
+
+/* ---------- helpers ---------- */
+function escapeHtml(s){ return String(s||'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;'); }
+
+/* ---------- initial load ---------- */
+applyTheme(localStorage.getItem(THEME_KEY) || 'dark');
+fetchData();
+</script>
+</body>
+</html>
